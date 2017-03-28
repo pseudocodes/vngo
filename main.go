@@ -14,6 +14,7 @@ func init() {
 
 func simpletest(event *Event) error {
 	fmt.Printf("process simpletest! event_type:%v\n", event.Type)
+	log.Printf("simple test log\n")
 	return nil
 }
 
