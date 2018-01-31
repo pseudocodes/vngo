@@ -1,8 +1,8 @@
-package main
+package trader
 
 import (
 	. "vngo/common"
-	. "vngo/eventbus"
+	. "vngo/event"
 	. "vngo/gateway"
 )
 

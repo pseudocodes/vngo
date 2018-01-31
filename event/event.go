@@ -11,19 +11,23 @@ type EventType string
 const (
 	EventTimer    EventType = "eTimer"
 	EventLog      EventType = "eLog"
-	EventTick     EventType = "eTick"
-	EventTrade    EventType = "eTrade"
-	EventOrder    EventType = "eOrder"
-	EventPosition EventType = "ePostion"
-	EventAccount  EventType = "eAccount"
-	EventContract EventType = "eContract"
-	EventError    EventType = "eError"
+	EventTick     EventType = "eTick."
+	EventTrade    EventType = "eTrade."
+	EventOrder    EventType = "eOrder."
+	EventPosition EventType = "ePostion."
+	EventAccount  EventType = "eAccount."
+	EventContract EventType = "eContract."
+	EventError    EventType = "eError."
 
-	EventCTALog      EventType = "eCTALog"
-	EventCTAStrategy EventType = "eCTAStrategy"
+	EventCTALog      EventType = "eCTALog."
+	EventCTAStrategy EventType = "eCTAStrategy."
 
-	EventDataRecorderLog EventType = "eDataRecorderLog"
+	EventDataRecorderLog EventType = "eDataRecorderLog."
 )
+
+func (et EventType) String() string {
+	return string(et)
+}
 
 type Event struct {
 	Type EventType
@@ -53,7 +57,7 @@ type Eventbus struct {
 
 func NewEventbus() *Eventbus {
 	engine := &Eventbus{
-		eventChan:       make(chan *Event, 20480),
+		eventChan:       make(chan *Event, 2048),
 		handlers:        make(map[EventType]map[*Handler]bool),
 		generalHandlers: make(map[*Handler]bool),
 		active:          false,
