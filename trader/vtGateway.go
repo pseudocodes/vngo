@@ -5,6 +5,15 @@ import . "vngo/event"
 //VtGateway 对接交易接口
 type IVtGateway interface {
 	Init(eventbus *Eventbus, name string)
+
+	Connect() error
+	Subscribe(subscribeReq *VtSubscribeReq) error
+	SendOrder(orderReq *VtOrderReq) error
+	CancelOrder(cancelOrderReq *VtCancelOrderReq) error
+	QueryAccount() error
+	QueryPosition() error
+	Close() error
+
 	OnTick(tick *VtTickData)
 	OnTrade(trade *VtTradeData)
 	OnOrder(order *VtOrderData)
@@ -14,13 +23,7 @@ type IVtGateway interface {
 	OnLog(log *VtLogData)
 	OnContract(contract *VtContractData)
 
-	Connect() error
-	Subscribe(subscribeReq *VtSubscribeReq) error
-	SendOrder(orderReq *VtOrderReq) error
-	CancelOrder(cancelOrderReq *VtCancelOrderReq) error
-	QueryAccount() error
-	QueryPosition() error
-	Close() error
+	Decription() interface{}
 }
 
 type VtGatewayBase struct {
@@ -38,12 +41,12 @@ func (g *VtGatewayBase) Init(eventbus *Eventbus, name string) {
 func (g *VtGatewayBase) OnTick(tick *VtTickData) {
 
 	event1 := NewEvent(EventTick)
-	event1.Dict["data"] = tick
+	event1.Data = tick
 	g.EventBus.Put(event1)
 
 	// 特定合约代码的事件
 	event2 := NewEvent(EventType(EventTick.String() + tick.VtSymbol))
-	event2.Dict["data"] = tick
+	event2.Data = tick
 	g.EventBus.Put(event2)
 }
 
@@ -51,12 +54,12 @@ func (g *VtGatewayBase) OnTick(tick *VtTickData) {
 func (g *VtGatewayBase) OnTrade(trade *VtTradeData) {
 	// 通用事件
 	event1 := NewEvent(EventTrade)
-	event1.Dict["data"] = trade
+	event1.Data = trade
 	g.EventBus.Put(event1)
 
 	// 特定合约的成交事件
 	event2 := NewEvent(EventType(EventTrade.String() + trade.VtSymbol))
-	event2.Dict["data"] = trade
+	event1.Data = trade
 	g.EventBus.Put(event2)
 }
 
@@ -64,12 +67,12 @@ func (g *VtGatewayBase) OnTrade(trade *VtTradeData) {
 func (g *VtGatewayBase) OnOrder(order *VtOrderData) {
 	// 通用事件
 	event1 := NewEvent(EventOrder)
-	event1.Dict["data"] = order
+	event1.Data = order
 	g.EventBus.Put(event1)
 
 	// 特定订单编号的事件
 	event2 := NewEvent(EventType(EventOrder.String() + order.VtOrderID))
-	event2.Dict["data"] = order
+	event1.Data = order
 	g.EventBus.Put(event2)
 }
 
@@ -78,12 +81,12 @@ func (g *VtGatewayBase) OnPosition(position *VtPositionData) {
 
 	// 通用事件
 	event1 := NewEvent(EventPosition)
-	event1.Dict["data"] = position
+	event1.Data = position
 	g.EventBus.Put(event1)
 
 	// 特定合约代码的事件
 	event2 := NewEvent(EventType(EventPosition.String() + position.VtSymbol))
-	event2.Dict["data"] = position
+	event1.Data = position
 	g.EventBus.Put(event2)
 }
 
@@ -91,33 +94,33 @@ func (g *VtGatewayBase) OnPosition(position *VtPositionData) {
 func (g *VtGatewayBase) OnAccount(account *VtAccountData) {
 	// 通用事件
 	event1 := NewEvent(EventAccount)
-	event1.Dict["data"] = account
+	event1.Data = account
 	g.EventBus.Put(event1)
 
 	// 特定合约代码的事件
 	event2 := NewEvent(EventType(EventAccount.String() + account.VtAccountID))
-	event2.Dict["data"] = account
+	event1.Data = account
 	g.EventBus.Put(event2)
 }
 
 //OnError 错误信息推送
 func (g *VtGatewayBase) OnError(err *VtErrorData) {
 	event1 := NewEvent(EventError)
-	event1.Dict["data"] = err
+	event1.Data = err
 	g.EventBus.Put(event1)
 }
 
 //OnLog 日志推送
 func (g *VtGatewayBase) OnLog(log *VtLogData) {
 	event1 := NewEvent(EventLog)
-	event1.Dict["data"] = log
+	event1.Data = log
 	g.EventBus.Put(event1)
 }
 
 //OnContract 合约基础信息推送
 func (g *VtGatewayBase) OnContract(contract *VtContractData) {
 	event1 := NewEvent(EventContract)
-	event1.Dict["data"] = contract
+	event1.Data = contract
 	g.EventBus.Put(event1)
 }
 

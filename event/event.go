@@ -1,7 +1,6 @@
-package eventbus
+package event
 
 import (
-	"log"
 	"sync"
 	"time"
 )
@@ -31,13 +30,12 @@ func (et EventType) String() string {
 
 type Event struct {
 	Type EventType
-	Dict map[EventType]interface{}
+	Data interface{}
 }
 
 func NewEvent(eventType EventType) *Event {
 	return &Event{
 		Type: eventType,
-		Dict: make(map[EventType]interface{}),
 	}
 }
 
@@ -72,16 +70,17 @@ func (e *Eventbus) run() {
 		case evt := <-e.eventChan:
 			e.process(evt)
 		case <-ticker.C:
-			log.Println("ticker Now")
+			// log.Println("ticker Now")
 			e.eventChan <- NewEvent(EventTimer)
 		}
 	}
+	ticker.Stop()
 }
 
 func (e *Eventbus) process(event *Event) {
 	if handlers, ok := e.handlers[event.Type]; ok {
 		for handler := range handlers {
-			handler.Handle(event)
+			go handler.Handle(event)
 		}
 	}
 	for handler := range e.generalHandlers {
@@ -96,20 +95,32 @@ func (e *Eventbus) Start() {
 
 func (e *Eventbus) Stop() {
 	e.active = false
+	e.clear()
 }
 
-func (e *Eventbus) Register(type_ EventType, handler *Handler) {
-	if handlers, ok := e.handlers[type_]; ok {
-		if _, exists := handlers[handler]; !exists {
-			handlers[handler] = true
-		}
+func (e *Eventbus) clear() {
+	for evt := range e.eventChan {
+		e.process(evt)
 	}
-
+	close(e.eventChan)
 }
 
-func (e *Eventbus) Unregister(type_ EventType, handler *Handler) {
+func (e *Eventbus) Register(type_ EventType, handler Handler) {
+	e.Lock()
 	if handlers, ok := e.handlers[type_]; ok {
-		delete(handlers, handler)
+		if _, exists := handlers[&handler]; !exists {
+			handlers[&handler] = true
+		}
+	} else {
+		e.handlers[type_] = make(map[*Handler]bool)
+		e.handlers[type_][&handler] = true
+	}
+	e.Unlock()
+}
+
+func (e *Eventbus) Unregister(type_ EventType, handler Handler) {
+	if handlers, ok := e.handlers[type_]; ok {
+		delete(handlers, &handler)
 	}
 }
 
@@ -118,17 +129,17 @@ func (e *Eventbus) Put(event *Event) {
 
 }
 
-func (e *Eventbus) RegisterGeneralHandler(handler *Handler) {
+func (e *Eventbus) RegisterGeneralHandler(handler Handler) {
 	e.Lock()
-	if _, ok := e.generalHandlers[handler]; !ok {
-		e.generalHandlers[handler] = true
+	if _, ok := e.generalHandlers[&handler]; !ok {
+		e.generalHandlers[&handler] = true
 	}
 	e.Unlock()
 
 }
 
-func (e *Eventbus) UnregisterGeneralHandler(handler *Handler) {
+func (e *Eventbus) UnregisterGeneralHandler(handler Handler) {
 	e.Lock()
-	delete(e.generalHandlers, handler)
+	delete(e.generalHandlers, &handler)
 	e.Unlock()
 }
