@@ -10,6 +10,7 @@ type MockModule struct {
 	trader.VtModule
 	engine   trader.VtEngine
 	eventbus *event.Eventbus
+	name     string
 }
 
 func NewMockModule() *MockModule {
@@ -17,7 +18,7 @@ func NewMockModule() *MockModule {
 }
 
 func (m *MockModule) Configure(name string, configRoot string) {
-
+	m.name = name
 }
 
 func (m *MockModule) Setup(engine trader.VtEngine, bus *event.Eventbus) error {
@@ -27,7 +28,7 @@ func (m *MockModule) Setup(engine trader.VtEngine, bus *event.Eventbus) error {
 }
 
 func (m *MockModule) Start() error {
-	m.RegisterEvent()
+	m.registerEvent()
 	return nil
 }
 
@@ -39,7 +40,7 @@ func (m *MockModule) Description() interface{} {
 	return nil
 }
 
-func (m *MockModule) RegisterEvent() {
+func (m *MockModule) registerEvent() {
 	m.eventbus.Register(event.EventTick, event.Handler(m.processTickEvent))
 	m.eventbus.Register(event.EventOrder, event.Handler(m.processOrderEvent))
 	m.eventbus.Register(event.EventTrade, event.Handler(m.processTradeEvent))

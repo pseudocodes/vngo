@@ -24,6 +24,7 @@ type IVtGateway interface {
 	OnContract(contract *VtContractData)
 
 	Decription() interface{}
+	Name() string
 }
 
 type VtGatewayBase struct {

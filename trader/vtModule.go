@@ -8,5 +8,6 @@ type VtModule interface {
 	Start() error
 	Stop() error
 
+	Name() string
 	Description() interface{}
 }
