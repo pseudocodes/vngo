@@ -65,6 +65,7 @@ func NewEventbus() *Eventbus {
 
 func (e *Eventbus) run() {
 	ticker := time.NewTicker(time.Second)
+	defer ticker.Stop()
 	for e.active {
 		select {
 		case evt := <-e.eventChan:
@@ -74,7 +75,6 @@ func (e *Eventbus) run() {
 			e.eventChan <- NewEvent(EventTimer)
 		}
 	}
-	ticker.Stop()
 }
 
 func (e *Eventbus) process(event *Event) {
@@ -119,9 +119,11 @@ func (e *Eventbus) Register(type_ EventType, handler Handler) {
 }
 
 func (e *Eventbus) Unregister(type_ EventType, handler Handler) {
+	e.Lock()
 	if handlers, ok := e.handlers[type_]; ok {
 		delete(handlers, &handler)
 	}
+	e.Unlock()
 }
 
 func (e *Eventbus) Put(event *Event) {

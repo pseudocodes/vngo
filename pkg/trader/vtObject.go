@@ -34,6 +34,13 @@ type VtTickData struct {
 	UpperLimit float64 // 涨停价
 	LowerLimit float64 // 跌停价
 
+	BidPriceSize int
+	BidPrice     []float64
+	BidVolume    []int64
+	AskPriceSize int
+	AskPrice     []float64
+	BidVolume    []int64
+
 	// 五档行情
 	BidPrice1 float64
 	BidPrice2 float64
