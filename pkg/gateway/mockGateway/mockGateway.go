@@ -1,8 +1,7 @@
-package mockGateway
+package mockgateway
 
 import (
 	"sync"
-	"vngo/core/event"
 	"vngo/core/protocol"
 	. "vngo/pkg/trader"
 
@@ -11,7 +10,7 @@ import (
 
 type MockGateway struct {
 	Base VtGatewayBase
-	Name string
+	name string
 
 	Ctx *protocol.ApplicationContext
 	Log *zap.Logger
@@ -22,11 +21,25 @@ type MockGateway struct {
 
 func NewMockGateway(name string) *MockGateway {
 	return &MockGateway{
-		Name: name,
+		name: name,
 	}
 }
-func (g *MockGateway) Init(bus *event.Eventbus, name string) {
-	g.Base.Init(bus, name)
+
+func (g *MockGateway) Init(name string) {
+	g.name = name
+	// g.Base.Init(bus, name)
+}
+
+func (g *MockGateway) Name() string {
+	return g.name
+}
+
+func (g *MockGateway) Start() error {
+	return nil
+}
+
+func (g *MockGateway) Stop() {
+
 }
 
 func (g *MockGateway) Connect() error {

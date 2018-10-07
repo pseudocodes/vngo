@@ -10,7 +10,7 @@ import (
 )
 
 type MockModule struct {
-	Name string
+	name string
 	Ctx  *protocol.ApplicationContext
 	Sub  *TypeMuxSubscription
 
@@ -27,7 +27,7 @@ func NewMockModule(ctx *protocol.ApplicationContext) *MockModule {
 }
 
 func (m *MockModule) Configure(name string, configRoot string) {
-	m.Name = name
+	m.name = name
 }
 
 func (m *MockModule) Start() error {
@@ -39,6 +39,10 @@ func (m *MockModule) Start() error {
 func (m *MockModule) Stop() error {
 	m.Sub.Unsubscribe()
 	return nil
+}
+
+func (m *MockModule) Name() string {
+	return m.name
 }
 
 func (m *MockModule) eventloop() {

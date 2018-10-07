@@ -7,5 +7,4 @@ type VtModule interface {
 	Stop() error
 
 	Name() string
-	Description() interface{}
 }

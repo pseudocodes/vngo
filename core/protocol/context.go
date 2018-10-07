@@ -4,12 +4,15 @@ import (
 	"fmt"
 	"sync"
 	"vngo/core/event"
+
+	"go.uber.org/zap"
 )
 
 type ApplicationContext struct {
 	ConfigurationValid bool
 	EventQueue         *event.TypeMux
 
+	Logger   *zap.Logger
 	Gateways map[string]VtGateway
 	Modules  map[string]VtModule
 
