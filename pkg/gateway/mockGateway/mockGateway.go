@@ -1,13 +1,23 @@
 package mockGateway
 
 import (
-	"vngo/event"
-	. "vngo/trader"
+	"sync"
+	"vngo/core/event"
+	"vngo/core/protocol"
+	. "vngo/pkg/trader"
+
+	"go.uber.org/zap"
 )
 
 type MockGateway struct {
 	Base VtGatewayBase
 	Name string
+
+	Ctx *protocol.ApplicationContext
+	Log *zap.Logger
+
+	quitChannel chan struct{}
+	running     sync.WaitGroup
 }
 
 func NewMockGateway(name string) *MockGateway {

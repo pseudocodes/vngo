@@ -1,4 +1,4 @@
-package trader
+package protocol
 
 // 默认空值
 const (

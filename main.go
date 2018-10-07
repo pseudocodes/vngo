@@ -1,61 +1,94 @@
 package main
 
 import (
+	"flag"
 	"fmt"
-	"log"
+	"os"
+	"os/signal"
+	"runtime"
+	"strings"
+	"syscall"
 	"time"
-	"vngo/event"
-	"vngo/gateway/mockGateway"
+	"vngo/core"
+	"vngo/core/protocol"
 
-	. "vngo/event"
-	"vngo/module/mockModule"
+	"github.com/apex/log"
+	"github.com/spf13/viper"
 )
 
-func init() {
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
-}
+type exitCode struct{ Code int }
 
-func simpletest(event *Event) error {
-	fmt.Printf("process simpletest! event_type:%v\n", event.Type)
-	log.Printf("simple test log\n")
-	return nil
-}
+func handleExit() {
+	if e := recover(); e != nil {
+		if exit, ok := e.(exitCode); ok {
+			if exit.Code != 0 {
+				fmt.Fprintln(os.Stderr, "TradeEngine failed at", time.Now().Format("January 2, 2006 at 3:04pm (MST)"))
+			} else {
+				fmt.Fprintln(os.Stderr, "Stopped TradeEngine at", time.Now().Format("January 2, 2006 at 3:04pm (MST)"))
+			}
 
-func process1() {
-	ee := NewEventbus()
-
-	// var handler Handler = simpletest
-	ee.RegisterGeneralHandler(Handler(simpletest))
-	ee.Start()
-
-	for {
-		time.Sleep(time.Second)
+			os.Exit(exit.Code)
+		}
+		panic(e) // not an exitCode, bubble up
 	}
 }
 
-func process2() {
-	module := mockModule.NewMockModule()
-	gateway := mockGateway.NewMockGateway("mock")
-	eventBus := NewEventbus()
-	eventBus.Start()
-	gateway.Init(eventBus, "mock")
-	module.Setup(nil, eventBus)
-	module.Start()
-	for {
-		log.Println("put tick event")
-		eventBus.Put(NewEvent(event.EventTick))
-		log.Println("put order event")
-		eventBus.Put(NewEvent(event.EventOrder))
-		log.Println("put trade event")
-		eventBus.Put(NewEvent(event.EventTrade))
-		time.Sleep(2 * time.Second)
-		log.Println()
+func initConfig() {
+	// The only command line arg is the config file
+	configPath := flag.String("config-dir", ".", "Directory that contains the configuration file")
+	flag.Parse()
+
+	// Load the configuration from the file
+	viper.SetConfigName("vngo")
+	viper.AddConfigPath(*configPath)
+	fmt.Fprintln(os.Stderr, "Reading configuration from", *configPath)
+	err := viper.ReadInConfig()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "Failed reading configuration:", err.Error())
+		panic(exitCode{1})
 	}
+
+	// setup viper to be able to read env variables with a configured prefix
+	viper.SetDefault("general.env-var-prefix", "burrow")
+	envPrefix := viper.GetString("general.env-var-prefix")
+	viper.SetEnvPrefix(envPrefix)
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	viper.AutomaticEnv()
+
+	// Create the PID file to lock out other processes
+	viper.SetDefault("general.pidfile", "burrow.pid")
+	pidFile := viper.GetString("general.pidfile")
+	if !core.CheckAndCreatePidFile(pidFile) {
+		// Any error on checking or creating the PID file causes an immediate exit
+		panic(exitCode{1})
+	}
+	defer core.RemovePidFile(pidFile)
+
+	// Set up stderr/stdout to go to a separate log file, if enabled
+	stdoutLogfile := viper.GetString("general.stdout-logfile")
+	if stdoutLogfile != "" {
+		core.OpenOutLog(stdoutLogfile)
+	}
+}
+
+func start(app *protocol.ApplicationContext, exitChannel chan os.Signal) int {
+
+	<-exitChannel
+	log.Info("Shutdown triggered")
+
+	app.Stop()
+	return 0
 }
 
 func main() {
-	fmt.Println("vn.go")
+	defer handleExit()
+	runtime.GOMAXPROCS(runtime.NumCPU())
 
-	// process1()
-	process2()
+	initConfig()
+	// Register signal handlers for exiting
+	exitChannel := make(chan os.Signal, 1)
+	signal.Notify(exitChannel, syscall.SIGINT, syscall.SIGQUIT, syscall.SIGTERM)
+
+	// This triggers handleExit (after other defers), which will then call os.Exit properly
+	panic(exitCode{start(nil, exitChannel)})
 }

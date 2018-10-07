@@ -1,6 +1,6 @@
 package trader
 
-import . "vngo/event"
+import . "vngo/core/event"
 
 //VtGateway 对接交易接口
 type IVtGateway interface {

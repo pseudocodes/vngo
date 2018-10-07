@@ -39,7 +39,7 @@ type VtTickData struct {
 	BidVolume    []int64
 	AskPriceSize int
 	AskPrice     []float64
-	BidVolume    []int64
+	AskVolume    []int64
 
 	// 五档行情
 	BidPrice1 float64
