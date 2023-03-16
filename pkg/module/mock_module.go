@@ -1,10 +1,11 @@
-package mockmodule
+package module
 
 import (
 	"log"
 	"sync"
-	. "vngo/core/event"
-	"vngo/core/protocol"
+
+	. "github.com/pseudocodes/vngo/core/event"
+	"github.com/pseudocodes/vngo/core/protocol"
 
 	"go.uber.org/zap"
 )

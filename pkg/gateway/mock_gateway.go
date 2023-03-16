@@ -1,9 +1,10 @@
-package mockgateway
+package gateway
 
 import (
 	"sync"
-	"vngo/core/protocol"
-	. "vngo/pkg/trader"
+
+	"github.com/pseudocodes/vngo/core/protocol"
+	. "github.com/pseudocodes/vngo/pkg/trader"
 
 	"go.uber.org/zap"
 )

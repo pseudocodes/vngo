@@ -1,9 +1,9 @@
 package core
 
 import (
-	"vngo/core/protocol"
-	"vngo/pkg/gateway/mockgateway"
-	"vngo/pkg/module/mockmodule"
+	"github.com/pseudocodes/vngo/core/protocol"
+	"github.com/pseudocodes/vngo/pkg/gateway"
+	"github.com/pseudocodes/vngo/pkg/module"
 
 	"go.uber.org/zap"
 )
@@ -11,7 +11,7 @@ import (
 func newCoordinators(ctx *protocol.ApplicationContext) []protocol.VtModule {
 	// This order is important - it makes sure that the things taking requests start up before things sending requests
 	return []protocol.VtModule{
-		&mockmodule.MockModule{
+		&module.MockModule{
 			Ctx: ctx,
 			Log: ctx.Logger.With(
 				zap.String("type", "module"),
@@ -23,7 +23,7 @@ func newCoordinators(ctx *protocol.ApplicationContext) []protocol.VtModule {
 
 func newGateways(ctx *protocol.ApplicationContext) []protocol.VtGateway {
 	return []protocol.VtGateway{
-		&mockgateway.MockGateway{
+		&gateway.MockGateway{
 			Ctx: ctx,
 			Log: ctx.Logger.With(
 				zap.String("type", "gateway"),

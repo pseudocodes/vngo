@@ -1,6 +1,6 @@
 package engine
 
-import "vngo/trader"
+import "github.com/pseudocodes/vngo/pkg/trader"
 
 type DataEngine struct {
 	trader.VtEngine

@@ -1,6 +1,6 @@
 package trader
 
-import . "vngo/core/event"
+import . "github.com/pseudocodes/vngo/core/event"
 
 type VtModule interface {
 	Configure(name string, configRoot string)

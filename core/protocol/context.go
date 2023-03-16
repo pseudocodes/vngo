@@ -3,7 +3,8 @@ package protocol
 import (
 	"fmt"
 	"sync"
-	"vngo/core/event"
+
+	"github.com/pseudocodes/vngo/core/event"
 
 	"go.uber.org/zap"
 )

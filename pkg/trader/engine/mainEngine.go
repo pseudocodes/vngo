@@ -4,25 +4,25 @@ import (
 	"fmt"
 	"sync"
 
-	. "vngo/event"
-	. "vngo/trader"
+	"github.com/pseudocodes/vngo/core/event"
+	"github.com/pseudocodes/vngo/pkg/trader"
 )
 
 type MainEngine struct {
-	VtEngine
+	trader.VtEngine
 
-	Gateways map[string]IVtGateway
-	Modules  map[string]VtModule
+	Gateways map[string]trader.IVtGateway
+	Modules  map[string]trader.VtModule
 
-	Eventbus *Eventbus
+	Eventbus *event.Eventbus
 	sync.RWMutex
 }
 
 func NewMainEngine() *MainEngine {
 	me := &MainEngine{
-		Gateways: make(map[string]IVtGateway),
-		Modules:  make(map[string]VtModule),
-		Eventbus: NewEventbus(),
+		Gateways: make(map[string]trader.IVtGateway),
+		Modules:  make(map[string]trader.VtModule),
+		Eventbus: event.NewEventbus(),
 	}
 	return me
 }
@@ -41,13 +41,13 @@ func (me *MainEngine) Stop() error {
 	return nil
 }
 
-func (me *MainEngine) AddModule(name string, module VtModule) {
+func (me *MainEngine) AddModule(name string, module trader.VtModule) {
 	me.Lock()
 	defer me.Unlock()
 	me.Modules[name] = module
 }
 
-func (me *MainEngine) AddGateway(name string, gateway IVtGateway) {
+func (me *MainEngine) AddGateway(name string, gateway trader.IVtGateway) {
 	me.Lock()
 	defer me.Unlock()
 	me.Gateways[name] = gateway
@@ -61,7 +61,7 @@ func (me *MainEngine) Connect(gatewayName string) error {
 	return gateway.Connect()
 }
 
-func (me *MainEngine) Subscribe(req *VtSubscribeReq, gatewayName string) error {
+func (me *MainEngine) Subscribe(req *trader.VtSubscribeReq, gatewayName string) error {
 	gateway, err := me.getGateway(gatewayName)
 	if err != nil {
 		return err
@@ -69,7 +69,7 @@ func (me *MainEngine) Subscribe(req *VtSubscribeReq, gatewayName string) error {
 	return gateway.Subscribe(req)
 }
 
-func (me *MainEngine) SendOrder(req *VtOrderReq, gatewayName string) error {
+func (me *MainEngine) SendOrder(req *trader.VtOrderReq, gatewayName string) error {
 	gateway, err := me.getGateway(gatewayName)
 	if err != nil {
 		return err
@@ -77,7 +77,7 @@ func (me *MainEngine) SendOrder(req *VtOrderReq, gatewayName string) error {
 	return gateway.SendOrder(req)
 }
 
-func (me *MainEngine) CancelOrder(req *VtCancelOrderReq, gatewayName string) error {
+func (me *MainEngine) CancelOrder(req *trader.VtCancelOrderReq, gatewayName string) error {
 	gateway, err := me.getGateway(gatewayName)
 	if err != nil {
 		return err
@@ -107,7 +107,7 @@ func (me *MainEngine) Close() error {
 	return nil
 }
 
-func (me *MainEngine) getGateway(gatewayName string) (IVtGateway, error) {
+func (me *MainEngine) getGateway(gatewayName string) (trader.IVtGateway, error) {
 	me.RLock()
 	defer me.RUnlock()
 	gateway, ok := me.Gateways[gatewayName]

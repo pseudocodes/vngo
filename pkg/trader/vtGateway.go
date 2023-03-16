@@ -1,8 +1,8 @@
 package trader
 
-import . "vngo/core/event"
+import . "github.com/pseudocodes/vngo/core/event"
 
-//VtGateway 对接交易接口
+// VtGateway 对接交易接口
 type IVtGateway interface {
 	Init(eventbus *Eventbus, name string)
 
@@ -38,7 +38,7 @@ func (g *VtGatewayBase) Init(eventbus *Eventbus, name string) {
 	g.GatewayName = name
 }
 
-//OnTick 市场行情推送
+// OnTick 市场行情推送
 func (g *VtGatewayBase) OnTick(tick *VtTickData) {
 
 	event1 := NewEvent(EventTick)
@@ -51,7 +51,7 @@ func (g *VtGatewayBase) OnTick(tick *VtTickData) {
 	g.EventBus.Put(event2)
 }
 
-//OnTrade 成交信息推送
+// OnTrade 成交信息推送
 func (g *VtGatewayBase) OnTrade(trade *VtTradeData) {
 	// 通用事件
 	event1 := NewEvent(EventTrade)
@@ -64,7 +64,7 @@ func (g *VtGatewayBase) OnTrade(trade *VtTradeData) {
 	g.EventBus.Put(event2)
 }
 
-//OnOrder 订单变化推送
+// OnOrder 订单变化推送
 func (g *VtGatewayBase) OnOrder(order *VtOrderData) {
 	// 通用事件
 	event1 := NewEvent(EventOrder)
@@ -77,7 +77,7 @@ func (g *VtGatewayBase) OnOrder(order *VtOrderData) {
 	g.EventBus.Put(event2)
 }
 
-//OnPosition 持仓信息推送
+// OnPosition 持仓信息推送
 func (g *VtGatewayBase) OnPosition(position *VtPositionData) {
 
 	// 通用事件
@@ -91,7 +91,7 @@ func (g *VtGatewayBase) OnPosition(position *VtPositionData) {
 	g.EventBus.Put(event2)
 }
 
-//OnAccount 账户信息推送
+// OnAccount 账户信息推送
 func (g *VtGatewayBase) OnAccount(account *VtAccountData) {
 	// 通用事件
 	event1 := NewEvent(EventAccount)
@@ -104,21 +104,21 @@ func (g *VtGatewayBase) OnAccount(account *VtAccountData) {
 	g.EventBus.Put(event2)
 }
 
-//OnError 错误信息推送
+// OnError 错误信息推送
 func (g *VtGatewayBase) OnError(err *VtErrorData) {
 	event1 := NewEvent(EventError)
 	event1.Data = err
 	g.EventBus.Put(event1)
 }
 
-//OnLog 日志推送
+// OnLog 日志推送
 func (g *VtGatewayBase) OnLog(log *VtLogData) {
 	event1 := NewEvent(EventLog)
 	event1.Data = log
 	g.EventBus.Put(event1)
 }
 
-//OnContract 合约基础信息推送
+// OnContract 合约基础信息推送
 func (g *VtGatewayBase) OnContract(contract *VtContractData) {
 	event1 := NewEvent(EventContract)
 	event1.Data = contract
