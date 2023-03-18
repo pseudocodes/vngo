@@ -1,0 +1,54 @@
+{
+  "STRATEGYS": {
+    "default": "SuperDoubleEMA",
+    "SuperDoubleEMA": {
+      "symbol": [
+        "ag2306"
+      ],
+      "max_klen": 1500,
+      "period": 180,
+      "params": [
+        12,
+        144
+      ]
+    },
+    "StrategyEMA": {
+      "symbol": [
+        "ag2306"
+      ],
+      "max_klen": 1500,
+      "period": 60,
+      "params": []
+    }
+  },
+  "USERS": {
+    "default": "dev",
+    "test": {
+      "m_host": "tcp://180.168.146.187:10211",
+      "t_host": "tcp://180.168.146.187:10201",
+      "bid": "9999",
+      "uid": "",
+      "pwd": "",
+      "app_id": "simnow_client_test",
+      "auth_code": "0000000000000000"
+    },
+    "dev": {
+      "m_host": "tcp://180.168.146.187:10131",
+      "t_host": "tcp://180.168.146.187:10130",
+      "bid": "9999",
+      "uid": "046056",
+      "pwd": "123@simnow.com",
+      "app_id": "simnow_client_test",
+      "auth_code": "0000000000000000"
+    },
+    "product": {
+      "m_host": "tcp://180.168.146.187:10211",
+      "t_host": "tcp://180.168.146.187:10201",
+      "bid": "9999",
+      "uid": "",
+      "pwd": "",
+      "app_id": "simnow_client_test",
+      "auth_code": "0000000000000000"
+    }
+  }
+}
