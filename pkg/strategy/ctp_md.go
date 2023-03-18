@@ -51,7 +51,7 @@ func (p *FtdcMdSpi) OnFrontConnected() {
 	go func() {
 		for !p.IsTraderInitFinish.Load() {
 			time.Sleep(time.Duration(100) * time.Millisecond)
-			fmt.Println("here")
+			// fmt.Println("here")
 		}
 		p.ReqUserLogin()
 	}()

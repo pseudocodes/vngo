@@ -230,6 +230,7 @@ func (p *FtdcTraderSpi) OnRspQryInstrument(pInstrument *goctp.InstrumentField, p
 		mInstrumentInfo.UnderlyingMultiple = pInstrument.UnderlyingMultiple
 		mInstrumentInfo.CombinationType = string(pInstrument.CombinationType)
 
+		// log.Printf("mapkey %v\n", mapKey)
 		p.Strategy.SetInstruments(mapKey, mInstrumentInfo)
 
 		if bIsLast {
@@ -365,11 +366,11 @@ func (p *FtdcTraderSpi) OnRspQryOrder(pOrder *goctp.OrderField, pRspInfo *goctp.
 
 	if !p.IsErrorRspInfo(pRspInfo) {
 
-		// 如果 没有数据 pOrder 等于0
-		pOrderCode := fmt.Sprintf("%v", pOrder)
+		// 如果 没有数据 pOrder 等于0 // nil
+		// pOrderCode := fmt.Sprintf("%v", pOrder)
 
 		// 只记录有报单编号的报单数据
-		if pOrderCode != "0" && pOrder.OrderSysID != "" {
+		if pOrder != nil && pOrder.OrderSysID != "" {
 			// 获得报单结构体数据
 			mOrder := GetOrderListStruct(pOrder)
 
@@ -393,7 +394,7 @@ func (p *FtdcTraderSpi) OnRspQryOrder(pOrder *goctp.OrderField, pRspInfo *goctp.
 				// 输出 未成交、部分成交 的报单
 				if val.OrderStatus == string(thost.THOST_FTDC_OST_NoTradeQueueing) || val.OrderStatus == string(thost.THOST_FTDC_OST_PartTradedQueueing) {
 					MapOrderNoTradeSize += 1
-					fmt.Printf("- 合约：%v   \t%v:%v   \t数量：%v   \t价格：%v   \t报单编号：%v (%v)\n", val.InstrumentID, val.DirectionTitle, val.CombOffsetFlagTitle, val.Volume, val.LimitPrice, utils.TrimSpace(val.OrderSysID), val.OrderStatusTitle)
+					fmt.Printf("- 合约：%v   \t%v:%v   \t数量: %v   \t价格: %v   \t报单编号: %v (%v)\n", val.InstrumentID, val.DirectionTitle, val.CombOffsetFlagTitle, val.Volume, val.LimitPrice, utils.TrimSpace(val.OrderSysID), val.OrderStatusTitle)
 				}
 			}
 
@@ -435,9 +436,9 @@ func (p *FtdcTraderSpi) OnRspQryInvestorPosition(pInvestorPosition *goctp.Invest
 	if !p.IsErrorRspInfo(pRspInfo) {
 
 		// 没有数据 pInvestorPosition 会等于 0
-		pInvestorPositionCode := fmt.Sprintf("%v", pInvestorPosition)
+		// pInvestorPositionCode := fmt.Sprintf("%v", pInvestorPosition)
 
-		if pInvestorPositionCode != "0" {
+		if pInvestorPosition != nil {
 
 			// 获得持仓结构体数据
 			mInvestorPosition := p.GetInvestorPositionStruct(pInvestorPosition)
@@ -572,10 +573,9 @@ func (p *FtdcTraderSpi) OnRspOrderAction(pInputOrderAction *goctp.InputOrderActi
 // 交易系统错误通知
 func (p *FtdcTraderSpi) IsErrorRspInfo(pRspInfo *goctp.RspInfoField) bool {
 
-	rspInfo := fmt.Sprintf("%v", pRspInfo)
-
 	// 容错处理 pRspInfo ，部分响应函数中，pRspInfo 为 0
-	if rspInfo == "0" {
+	if pRspInfo == nil {
+		// log.Printf("RspInfo: %+v\n", pRspInfo)
 		return false
 
 	} else {
