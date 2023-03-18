@@ -19,7 +19,20 @@ func CreateFtdcTraderSpi(c *CtpClient) *FtdcTraderSpi {
 	p.SetOnFrontDisconnected(p.OnFrontDisconnected)
 	p.SetOnHeartBeatWarning(p.OnHeartBeatWarning)
 	p.SetOnRspAuthenticate(p.OnRspAuthenticate)
-	// p.SetOnRspUserLogin(p.On)
+	p.SetOnRspUserLogin(p.OnRspUserLogin)
+	p.SetOnRspOrderAction(p.OnRspOrderAction)
+	p.SetOnRspOrderInsert(p.OnRspOrderInsert)
+	p.SetOnRspSettlementInfoConfirm(p.OnRspSettlementInfoConfirm)
+	p.SetOnRspQryInstrument(p.OnRspQryInstrument)
+	p.SetOnRspQryTradingAccount(p.OnRspQryTradingAccount)
+	p.SetOnRspQryOrder(p.OnRspQryOrder)
+	p.SetOnRspQryInvestorPosition(p.OnRspQryInvestorPosition)
+
+	p.SetOnRtnOrder(p.OnRtnOrder)
+	p.SetOnRtnTrade(p.OnRtnTrade)
+	p.SetOnErrRtnOrderAction(p.OnErrRtnOrderAction)
+	p.SetOnRspError(p.OnRspError)
+
 	return p
 }
 
