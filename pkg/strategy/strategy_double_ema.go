@@ -34,13 +34,13 @@ func (s *SuperDoubleEMA) OnBar(sym string, kdata Kline) {
 	len114 := len(ema144)
 	// 上穿
 	if (ema12[len12-1] > ema144[len114-1]) && (ema12[len12-2] <= ema144[len114-2]) {
-		s.OpenOrder(sym, 0, s.AM[sym][kLen-1].Close, 10)
+		// s.OpenOrder(sym, 0, s.AM[sym][kLen-1].Close, 10)
 		fmt.Println(utils.TimeToStr(int64(s.AM[sym][kLen-1].Datetime), ""), sym, "开多单")
 		// todo 平空单
 	}
 	//下穿
 	if (ema12[len12-1] < ema144[len114-1]) && (ema12[len12-2] >= ema144[len114-2]) {
-		s.OpenOrder(sym, 1, s.AM[sym][kLen-1].Close, 10)
+		// s.OpenOrder(sym, 1, s.AM[sym][kLen-1].Close, 10)
 		fmt.Println(utils.TimeToStr(int64(s.AM[sym][kLen-1].Datetime), ""), sym, "开空单")
 		// todo 平空单
 	}

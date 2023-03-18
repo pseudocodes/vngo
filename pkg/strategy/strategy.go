@@ -20,8 +20,8 @@ type IStrategy interface {
 	OnStart(spi *FtdcMdSpi)                  // *交易账户初始化完毕，行情登录成功后，启动策略（FtdcMdSpi.OnRspUserLogin）
 	OnQuote(sym string, ticker Ticker)       // tick 报单事件
 	OnBar(sym string, kdata Kline)           // K线发生变化事件
-	OnOrderChange(pOrder OrderListStruct)    // 订单发生变化事件
-	OnTradeDeal(pTrade goctp.TradeField)     // 成交事件
+	OnOrderChange(pOrder *OrderListStruct)   // 订单发生变化事件
+	OnTradeDeal(pTrade *goctp.TradeField)    // 成交事件
 }
 
 type Strategy struct {
@@ -71,7 +71,7 @@ func (s *Strategy) OnQuote(sym string, ticker Ticker) { //触发Ticker事件
 			"\t卖一："+utils.Float64ToString(ticker.AskPrice1)+"\t"+utils.IntToString(ticker.AskVolume1),
 		)
 	*/
-
+	// fmt.Printf("strategy.on_quote\n")
 	if s.TK[sym].UpdateTime == ticker.UpdateTime { //1秒内多条推送取消
 		currKline[sym] = UpdateKLine(currKline[sym], ticker)
 		//更新PreTicker数据
@@ -118,11 +118,11 @@ func (s *Strategy) OnBar(sym string, kdata Kline) { //触发K线更新事件
 	//fmt.Println(sym, s.AM[sym])
 }
 
-func (s *Strategy) OnOrderChange(pOrder OrderListStruct) {
+func (s *Strategy) OnOrderChange(pOrder *OrderListStruct) {
 
 }
 
-func (s *Strategy) OnTradeDeal(pTrade goctp.TradeField) {
+func (s *Strategy) OnTradeDeal(pTrade *goctp.TradeField) {
 
 }
 

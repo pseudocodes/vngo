@@ -51,6 +51,7 @@ func (p *FtdcMdSpi) OnFrontConnected() {
 	go func() {
 		for !p.IsTraderInitFinish.Load() {
 			time.Sleep(time.Duration(100) * time.Millisecond)
+			fmt.Println("here")
 		}
 		p.ReqUserLogin()
 	}()
@@ -92,7 +93,7 @@ func (p *FtdcMdSpi) SubscribeMarketData(InstrumentID []string) int {
 	}
 
 	fmt.Println("")
-	log.Println("订阅行情数据中...")
+	log.Printf("订阅行情数据中... <%+v>", InstrumentID)
 
 	iResult := p.MdApi.SubscribeMarketData(InstrumentID...)
 
@@ -104,10 +105,13 @@ func (p *FtdcMdSpi) SubscribeMarketData(InstrumentID []string) int {
 }
 
 // OnRspSubMarketData 订阅行情应答
-func (p *FtdcMdSpi) OnRspSubMarketData(pSpecificInstrument *thost.CThostFtdcSpecificInstrumentField, pRspInfo *goctp.RspInfoField, nRequestID int, bIsLast bool) {
+func (p *FtdcMdSpi) OnRspSubMarketData(pSpecificInstrument string, pRspInfo *goctp.RspInfoField, nRequestID int, bIsLast bool) {
+	log.Printf("OnRspSubMarketData \n")
+
 	if !p.IsErrorRspInfo(pRspInfo) {
-		log.Printf("订阅合约 %v 行情数据成功！\n", string(pSpecificInstrument.InstrumentID[:]))
+		log.Printf("订阅合约 %v 行情数据成功！\n", pSpecificInstrument)
 	}
+	// log.Printf("OnRspSubMarketData \n")
 }
 
 // UnSubscribeMarketData 退订行情
@@ -154,6 +158,7 @@ func (p *FtdcMdSpi) OnRtnDepthMarketData(pDepthMarketData *goctp.DepthMarketData
 		AskPrice1:    pDepthMarketData.AskPrice1,
 		AskVolume1:   pDepthMarketData.AskVolume1,
 	}
+	// fmt.Printf("OnRtnDepthMarketData\n")
 	//fmt.Printf("%v 合约：%v \t最新价：%v [%v\t%v] \t买一价：%v \t卖一价：%v \t买一量：%v \t卖一量：%v\n", pDepthMarketData.GetUpdateTime(),
 	//	pDepthMarketData.GetInstrumentID(), pDepthMarketData.GetLastPrice(), pDepthMarketData.GetVolume(), pDepthMarketData.GetOpenInterest(), pDepthMarketData.GetBidPrice1(), pDepthMarketData.GetAskPrice1(), pDepthMarketData.GetBidVolume1(), pDepthMarketData.GetAskVolume1())
 	p.Strategy.OnQuote(pDepthMarketData.InstrumentID, t)

@@ -410,6 +410,7 @@ type FtdcMdSpi struct {
 // FtdcTraderSpi Ctp 交易 spi 回调函数
 type FtdcTraderSpi struct {
 	*CtpClient
+	*goctp.TraderSpiLite
 }
 
 // CtpClient Ctp 客户端 行情、交易模块 全局变量
