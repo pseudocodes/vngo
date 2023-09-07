@@ -167,10 +167,8 @@ func (p *FtdcMdSpi) OnRtnDepthMarketData(pDepthMarketData *goctp.DepthMarketData
 // IsErrorRspInfo 行情系统错误通知
 func (p *FtdcMdSpi) IsErrorRspInfo(pRspInfo *goctp.RspInfoField) bool {
 
-	rspInfo := fmt.Sprintf("%v", pRspInfo)
-
 	// 容错处理 pRspInfo ，部分响应函数中，pRspInfo 为 0
-	if rspInfo == "0" {
+	if pRspInfo == nil {
 		return false
 
 	} else {

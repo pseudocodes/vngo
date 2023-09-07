@@ -6,7 +6,7 @@ require (
 	github.com/apex/log v1.9.0
 	github.com/asmcos/requests v0.0.0-20210319030608-c839e8ae4946
 	github.com/axgle/mahonia v0.0.0-20180208002826-3358181d7394
-	github.com/pseudocodes/goctp v0.0.0-20230318102818-25c518be04a6
+	github.com/pseudocodes/goctp v0.0.0-20230318161013-c9fc42b83200
 	github.com/spf13/viper v1.15.0
 	github.com/tidwall/gjson v1.14.4
 	go.uber.org/zap v1.24.0

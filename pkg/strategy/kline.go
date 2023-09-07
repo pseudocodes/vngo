@@ -146,5 +146,12 @@ func UpdateKLine(thisKline Kline, tickers Ticker) Kline {
 	if tickers.Price > thisKline.High {
 		thisKline.High = tickers.Price
 	}
+	if tickers.HighestPrice > thisKline.High {
+		thisKline.High = tickers.HighestPrice
+	}
+
+	if tickers.LowestPrice < thisKline.Low {
+		thisKline.Low = tickers.LowestPrice
+	}
 	return thisKline
 }
